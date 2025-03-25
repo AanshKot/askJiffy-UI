@@ -6,12 +6,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     providers: [Google],
     session: {strategy : "jwt"},
     callbacks: {
-        jwt({token, account, profile,trigger}){
+        //profile variable represents the user's profile info retrieved from OAuth provider
+        jwt({token, account, profile}){
             if(account){
                 token.accessToken = account.access_token
+                token.idToken = account.id_token
             }
-            console.log(token);
-            //add call to fetch user profile here? or just create a separate hook that takes the session.access token and gets the user profile
             return token;
         },
         async session({session, token}){
@@ -35,6 +35,7 @@ declare module "next-auth"{
 declare module "next-auth/jwt"{
     interface JWT {
         accessToken?: string
+        idToken?: string
     }
 }
 
