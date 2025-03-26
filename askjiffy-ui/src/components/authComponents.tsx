@@ -1,7 +1,7 @@
 import { signIn, signOut } from "@/lib/auth/authConfig";
 import { Button } from "./ui/button";
 
-//React.ComponentPropsWithRef<T> extracts all props of a given component and adds support for ref in the componenet if the componenets support forwarding refs, 
+//React.ComponentPropsWithRef<T> extracts all props of a given component and adds support for ref in the component if the components support forwarding refs, 
 //the Button component that SignIn is compromised of forwards ref to the <button> JSX tag
 export function SignIn({provider, ...props} : {provider?:string} & React.ComponentPropsWithRef<typeof Button >){
     return(

@@ -3,8 +3,8 @@ interface UserProfile{
     id: number;
     email: string;
     role: number;
-    ChatHistory: UserChat[];
-    Vehicles: UserVehicle[];
+    chatHistory: UserChat[];
+    vehicles: UserVehicle[];
 }
 
 interface UserChat{
