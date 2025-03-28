@@ -10,6 +10,7 @@ const fetchUserProfile = ():Promise<UserProfile> => axios.get("/api/user/getprof
 export function useGetProfile():UseQueryResult<UserProfile,Error>{
     return useQuery({
         queryKey: ['useGetProfile'],
-        queryFn: fetchUserProfile
+        queryFn: fetchUserProfile,
+        retry:1
     });
 }

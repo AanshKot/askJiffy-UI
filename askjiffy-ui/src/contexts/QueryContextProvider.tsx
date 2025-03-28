@@ -29,15 +29,15 @@ this is bad for performance and leaks any sensitive data
 
 function makeQueryClient(){
     return new QueryClient(
-        {
-            defaultOptions: {
-              queries: {
-                // With SSR want to set some default staleTime
-                // above 0 to avoid refetching immediately on the client
-                staleTime: 60 * 1000,
-              },
-            },
-          }
+        // {
+        //     defaultOptions: {
+        //       queries: {
+        //         // With SSR want to set some default staleTime
+        //         // above 0 to avoid refetching immediately on the client
+        //         staleTime: 60 * 1000,
+        //       },
+        //     },
+        //   }
     );
 }
 

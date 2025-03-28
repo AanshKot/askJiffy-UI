@@ -1,11 +1,10 @@
-import { Button } from "../button";
 import { Input } from "../input";
 import { FileUp, ArrowUp } from "lucide-react"
 
 export default function ChatInput(){
     return(
-        <div id="chatInput" className="w-full">
-            <Input />
+        <div id="chatInput" className="w-full max-w-3xl border border-solid rounded-lg shadow px-2">
+            <Input className="px-0 outline-none focus:outline-none border-none focus:border-transparent focus-visible:ring-0 shadow-none"/>
             <InputFooter/>
         </div>
     ) 
@@ -13,17 +12,17 @@ export default function ChatInput(){
 
 function InputFooter(){
     return(
-        <div id="inputFooter" className="w-full flex">
+        <div id="inputFooter" className="w-full flex justify-between">
             <label>
-                <Button asChild variant = "outline" type="button">
-                    <FileUp className="w-7 h-7" />
-                </Button>
+                <button className="bg-transparent" type="button">
+                    <FileUp className="w-5 h-5" />
+                </button>
             </label>
             
             <label>
-                <Button asChild type="submit">
-                    <ArrowUp className="w-7 h-7" />
-                </Button>
+                <button type="submit">
+                    <ArrowUp className="w-5 h-5" />
+                </button>
             </label>
         </div>
     )

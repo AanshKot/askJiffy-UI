@@ -3,8 +3,8 @@
 import { Avatar } from "radix-ui";
 //can only call signOut using form action with inline "use server" in a server component
 // can call logout server action because 
-import { logout } from "@/actions/authActions";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./dropdown-menu";
+import { signOut } from "next-auth/react";
 interface ProfileDropdownProps{
     imageUrl : string
 
@@ -33,7 +33,7 @@ export default function ProfileDropdown({imageUrl} : ProfileDropdownProps){
                
                     <DropdownMenuContent className="ProfileDropdown" sideOffset={5}>
                         <DropdownMenuItem className="flex justify-center w-full">
-                            <button className="text-black w-full hover:bg-accent " onClick={() => logout()}>Sign Out</button>
+                            <button className="text-black w-full hover:bg-accent " onClick={() => signOut()}>Sign Out</button>
                         </DropdownMenuItem>
                     </DropdownMenuContent>
         
