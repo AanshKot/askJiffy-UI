@@ -64,7 +64,10 @@
 nav > div:first-child {
 	display: contents
 }
-  
+
+textarea {
+  resize: none;
+}
 
 @layer base {
   :root {

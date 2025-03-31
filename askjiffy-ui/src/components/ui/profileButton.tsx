@@ -9,7 +9,7 @@ export default async function ProfileButton(){
 
     return(
         // <div className="ml-auto pr-3">
-        <div className="pt-3 pr-5">
+        <div>
             {!session?.user ? (<SignIn/>):
             (
                 <ProfileDropdown imageUrl={session.user.image!} />

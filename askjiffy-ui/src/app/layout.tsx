@@ -43,15 +43,15 @@ export default async function RootLayout({
           <SessionProvider session={session}>
             <ThemeProvider enableSystem={false}>
               <QueryContextProvider>
-                  <main>
-                      <div className="flex h-full w-full gap-10">
+                  <main className="h-screen w-screen px-5 py-2">
+                      <div id="mainApp" className="flex h-full w-full gap-10">
                         <SidebarProvider>
                             <AppSidebar/>
-                                <div>
+                                <div className="h-full">
                                     <SidebarTrigger />
                                 </div>
                         </SidebarProvider>
-                        <div id="mainContent" className="content w-full px-10">
+                        <div id="mainContent" className="flex flex-col w-full max-w-[95%] h-full max-h-[90%] py-5 gap-2">
                             <NavBar/>
                             {children}
                         </div>
