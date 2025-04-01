@@ -5,6 +5,11 @@ import { ThemeProvider } from "next-themes";
 import { SessionProvider } from "next-auth/react"
 import { auth } from "@/lib/auth/authConfig";
 import { Session } from "next-auth";
+import { QueryContextProvider } from "@/contexts/QueryContextProvider";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
+import NavBar from "@/components/navbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,7 +32,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session: Session | null = await auth();
-
+  
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -35,13 +40,27 @@ export default async function RootLayout({
       >
         {/* for proper layout add header, main and footer */}
         <header></header>
-        <main>
           <SessionProvider session={session}>
             <ThemeProvider enableSystem={false}>
-              {children}
+              <QueryContextProvider>
+                  <main className="h-screen w-screen px-5 py-2">
+                      <div id="mainApp" className="flex h-full w-full gap-10">
+                        <SidebarProvider>
+                            <AppSidebar/>
+                                <div className="h-full">
+                                    <SidebarTrigger />
+                                </div>
+                        </SidebarProvider>
+                        <div id="mainContent" className="flex flex-col w-full max-w-[95%] h-full max-h-[90%] py-5 gap-2">
+                            <NavBar/>
+                            {children}
+                        </div>
+                      </div>
+                  </main>
+                <ReactQueryDevtools initialIsOpen={false} />
+              </QueryContextProvider>
             </ThemeProvider>
           </SessionProvider>
-        </main>
         <footer></footer>
       </body>
     </html>
