@@ -1,6 +1,6 @@
 import { FileUp, ArrowUp } from "lucide-react"
 import { Textarea } from "../textarea"
-import { UseChatInputContext } from "@/contexts/ChatHistoryContext"
+import { UseChatInputContext } from "@/contexts/ChatInputContext"
 
 export default function ChatInput(){
     const { setInputText } = UseChatInputContext();

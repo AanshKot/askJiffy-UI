@@ -39,5 +39,11 @@ export const ChatInputProvider = ({children} : ChatProviderProps ) => {
 }
 
 export const UseChatInputContext = () => {
-    return useContext(ChatInputContext)
+    const context = useContext(ChatInputContext)
+
+    if(!context){
+        throw new Error('useChatInput must be used within a ChatInputProvider');
+    }
+    
+    return context;
 }
