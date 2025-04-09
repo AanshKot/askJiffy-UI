@@ -9,7 +9,7 @@ import { UseChatInputContext } from "@/contexts/ChatHistoryContext";
 export default function NewChatPage(){
     
     const {data : session} = useSession();
-    const {data:userProfile, isLoading, isError} = useGetProfile();
+    const {data:userProfile, isLoading, isError, error} = useGetProfile();
     
 
     /*
@@ -23,7 +23,7 @@ export default function NewChatPage(){
     if(!session?.user){
         return(
             <div>
-                Unauthenticated
+                No Next Auth Session
             </div>
         );
     }
@@ -41,7 +41,7 @@ export default function NewChatPage(){
     if(isError){
         return(
             <div>
-                Unauthenticated
+                {error.message}
             </div>
         );
     }

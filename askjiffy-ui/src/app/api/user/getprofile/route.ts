@@ -9,9 +9,9 @@ export async function GET(req: Request) : Promise<Response>{
     const token = await getToken({req,secret}); // token is only sent with requests if the request comes from the browser, if the request originates from the server, the server doesn't have browser context and as such cannot send the JWT
   
     if(!token){
-        return new Response("Unauthorized", { status: 401})
+        return new Response("Unauthorized, no next auth session", { status: 401})
     }
-
+    
     try{
         const res = await axios.get(`${process.env.API_URL}/User/getprofile`,{
             headers:{
@@ -24,7 +24,21 @@ export async function GET(req: Request) : Promise<Response>{
     }
     catch(error){
         console.error('Error fetching profile:', error);
-        return new Response("Error fetching profile",{ status: 500});
+        
+        // when catching an error, Typescript doesn't know what the type of error is, error is unknown cannot access properties like .response or .status
+        // axios.isAxiosError(error) narrows the type first
+        if(axios.isAxiosError(error)){
+            const status = error.response?.status;
+
+            if(status == 401 || status == 403){
+                return new Response("Unauthorized", {status});
+            }
+
+            return new Response("Internal Server Error", { status : 500});
+        }
+
+        //catch all for unknown errors 
+        return new Response("Unexpected Error",{ status : 500});
     }
     
 
