@@ -4,7 +4,7 @@ import { Trash2 } from "lucide-react"
 import { Separator } from "../separator";
 
 interface Props{
-    vehicle : UserVehicle
+    vehicle : Vehicle
 }
 
 export default function VehicleCard({vehicle}:Props){

@@ -9,8 +9,7 @@ import { UseChatInputContext } from "@/contexts/ChatHistoryContext";
 export default function NewChatPage(){
     
     const {data : session} = useSession();
-    const {data:userProfile, isLoading, isError, error} = useGetProfile();
-    
+   
 
     /*
         using React context to avoid defining states here, cleaner + avoids having to drill 
@@ -18,39 +17,12 @@ export default function NewChatPage(){
     */
     const { inputText, selectedVehicle } = UseChatInputContext();
 
-    console.log(inputText);
-
-    if(!session?.user){
-        return(
-            <div>
-                No Next Auth Session
-            </div>
-        );
-    }
-
-    
-
-    if(isLoading){
-        return(
-            <div>
-                Loading...
-            </div>
-        );
-    }
-
-    if(isError){
-        return(
-            <div>
-                {error.message}
-            </div>
-        );
-    }
-    
+  
     return(
         <div className="NewChatForm w-[95%] h-full flex items-center justify-center">
             
             <form className="w-full h-full flex flex-col items-center justify-between">
-                <VehicleCarousel vehicleList={userProfile?.vehicles} />
+                <VehicleCarousel />
                 {/* <QuestionTypeSelect setQuestionType={setQuestionType}/> */}
                 <ChatInput/>
             </form>

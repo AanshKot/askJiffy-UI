@@ -1,15 +1,32 @@
+import { useGetVehicles } from "@/lib/queries/user/useGetVehicles";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../carousel";
 import AddVehicleCard from "./addVehicleCard";
+import AddVehicleButtonAndModal from "./addVehicleButtonAndModal";
 import VehicleCard from "./vehicleCard";
+import { useState } from "react";
 
 
 
-interface Props{
-    vehicleList : UserVehicle[] | undefined
-}
 
-export default function VehicleCarousel({vehicleList}:Props){
+export default function VehicleCarousel(){
+    const {data:vehicleList, isLoading, isError, error} = useGetVehicles();
 
+    // handle error and loading states later
+    if(isError){
+        return(
+            <div>Error: {error.message}</div>
+        )
+    }
+
+    if(isLoading){
+        return(
+            <div>Loading...</div>
+        )
+    }
+
+ 
+
+    console.log(vehicleList);
     //can configure to autoplay after some time of inactivity??
     return(
         <div className="w-full h-full max-w-[500px] max-h-[250px] flex flex-col items-center gap-3">
@@ -17,7 +34,7 @@ export default function VehicleCarousel({vehicleList}:Props){
             <Carousel className="w-full h-full">
                 <CarouselContent className="carouselContent flex items-center w-full h-[95%] gap-5">
                         <CarouselItem className="basis-1/3 h-[33.3333%] max-w-[70px] max-h-[70px] addVehicleCarouselItem">
-                            <AddVehicleCard />
+                            <AddVehicleButtonAndModal />
                         </CarouselItem>
 
 
