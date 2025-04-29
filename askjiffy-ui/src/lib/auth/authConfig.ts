@@ -24,7 +24,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 } 
             }
             
-            if( Date.now() < token.expiresAt! * 1000 ){
+            else if( Date.now() < token.expiresAt! * 1000 ){
                 console.log(token.idToken);
                 return token;
             }

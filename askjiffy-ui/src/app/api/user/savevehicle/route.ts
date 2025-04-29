@@ -15,7 +15,7 @@ export async function POST(req: Request) : Promise<Response>{
     try{
         // body of a request is a stream — not immediately available as a plain object.
         const newVehicle: Vehicle = await req.json()
-        console.log(newVehicle);
+        
 
         const res = await axios.post(`${process.env.API_URL}/User/savevehicle`, newVehicle, {
             headers:{

@@ -2,18 +2,15 @@ import {
     Dialog,
     DialogContent,
     DialogDescription,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
 
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -25,16 +22,17 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Transmission } from "@/types/enums"
-import { useSaveVehicle } from "@/lib/queries/user/useMutateVehicles"
+import { SaveVehicleMutation } from "@/lib/queries/user/useMutateVehicles"
 import { getTransmissionEnumValue } from "@/lib/utils"
+import { useState } from "react"
 
 const currentYear: number = new Date().getFullYear();
 
 const formSchema = z.object({
-    make: z.string().nonempty({
+    make: z.string().min(2, {
         message: "Must select a valid manufacturer.",
     }),
-    model: z.string().nonempty({
+    model: z.string().min(2, {
         message: "Must select a valid model."
     }),
     year: z.coerce.number().gt(1961,{
@@ -49,19 +47,24 @@ const formSchema = z.object({
         message: "Must select a valid transmission (Automatic, Manual, CVT)."
     }),
     chassis: z.string().optional(),
-    mileage: z.coerce.number().gt(0,{
-        message: "Mileage must be greater than 0 km"
+    mileage: z.coerce.number().gte(0,{
+        message: "Cannot have negative mileage."
     }).lt(999999,{
         message: "Mileage must be less than 999999 km"
     }).optional()
 })
 
 export default function AddVehicleButtonAndModal(){
-    const {mutate, isPending, isSuccess, isError } = useSaveVehicle();
+    const {mutate:saveVehicle} = SaveVehicleMutation();
+
+    //https://www.radix-ui.com/primitives/docs/components/dialog#close-after-asynchronous-form-submission
+    const [open, setOpen] = useState<boolean>(false);
+
 
     // 1. Define form with schema
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
+        mode: "onChange", // enable real-time validation tracking
         defaultValues: {
             make: "",
             model: "",
@@ -84,12 +87,12 @@ export default function AddVehicleButtonAndModal(){
             mileage: values.mileage
         }
 
-        mutate(newVehicle);
+        saveVehicle(newVehicle);
+        setOpen(false);
     }
 
-
     return(
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger>
                 <AddVehicleCard />
             </DialogTrigger>
@@ -114,9 +117,9 @@ export default function AddVehicleButtonAndModal(){
                                         <FormItem className="grid grid-cols-4 items-center gap-4">
                                             <FormLabel className="text-right mt-2">Make</FormLabel>
                                             <FormControl>
-                                                <Input className="col-span-3 " placeholder="Manufacturer" {...field} />
+                                                <Input className="col-span-3 " placeholder="Manufacturer" {...field} required />
                                             </FormControl>
-                                            <FormMessage />
+                                            <FormMessage className="w-full col-span-3 m-0" />
                                         </FormItem>
                                     )}
                                 />
@@ -128,9 +131,9 @@ export default function AddVehicleButtonAndModal(){
                                         <FormItem className="grid grid-cols-4 items-center gap-4">
                                             <FormLabel className="text-right mt-2">Model</FormLabel>
                                             <FormControl>
-                                                <Input className="col-span-3 " placeholder="Model" {...field} />
+                                                <Input className="col-span-3 " placeholder="Model" {...field} required />
                                             </FormControl>
-                                            <FormMessage />
+                                            <FormMessage className="w-full col-span-3 m-0" />
                                         </FormItem>
                                     )}
                                 />
@@ -142,9 +145,9 @@ export default function AddVehicleButtonAndModal(){
                                         <FormItem className="grid grid-cols-4 items-center gap-4">
                                             <FormLabel className="text-right mt-2">Year</FormLabel>
                                             <FormControl>
-                                                <Input className="col-span-3 " placeholder="Year" {...field} />
+                                                <Input className="col-span-3 " placeholder="Year" {...field} required />
                                             </FormControl>
-                                            <FormMessage />
+                                            <FormMessage className="w-full col-span-3 m-0" />
                                         </FormItem>
                                     )}
                                 />
@@ -158,7 +161,7 @@ export default function AddVehicleButtonAndModal(){
                                             <FormControl>
                                                 <Input className="col-span-3 " placeholder="Mileage" {...field} />
                                             </FormControl>
-                                            <FormMessage />
+                                            <FormMessage className="w-full col-span-3 m-0" />
                                         </FormItem>
                                     )}
                                 />
@@ -172,7 +175,7 @@ export default function AddVehicleButtonAndModal(){
                                             <FormControl>
                                                 <Input className="col-span-3 ml-2 " placeholder="Transmission" {...field} />
                                             </FormControl>
-                                            <FormMessage />
+                                            <FormMessage className="w-full col-span-3 m-0" />
                                         </FormItem>
                                     )}
                                 />
@@ -186,12 +189,12 @@ export default function AddVehicleButtonAndModal(){
                                             <FormControl>
                                                 <Input className="col-span-3 " placeholder="Chassis" {...field} />
                                             </FormControl>
-                                            <FormMessage />
+                                            <FormMessage className="w-full col-span-3 m-0" />
                                         </FormItem>
                                     )}
                                 />
-                            <div className="w-full flex justify-center pt-2">
-                                <Button type="submit" className="w-[50%]">
+                            <div className="w-full flex justify-center pt-2" >
+                                <Button type="submit" className="w-[50%]" disabled={!form.formState.isValid}>
                                     Save Vehicle
                                 </Button>
                             </div>
