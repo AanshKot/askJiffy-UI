@@ -28,6 +28,7 @@
     "dotenv": "^16.4.7",
     "embla-carousel-react": "^8.5.2",
     "feather-icons-react": "^0.8.1",
+    "jotai": "^2.12.3",
     "lucide-react": "^0.483.0",
     "next": "15.1.7",
     "next-auth": "5.0.0-beta.25",

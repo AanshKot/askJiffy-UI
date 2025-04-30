@@ -10,6 +10,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import NavBar from "@/components/navbar";
+import { JotaiProvider } from "@/contexts/JotaiProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,20 +44,22 @@ export default async function RootLayout({
           <SessionProvider session={session}>
             <ThemeProvider enableSystem={false}>
               <QueryContextProvider>
-                  <main className="h-screen w-screen px-5 py-2">
-                      <div id="mainApp" className="flex h-full w-full gap-10">
-                        <SidebarProvider>
-                            <AppSidebar/>
-                                <div className="h-full">
-                                    <SidebarTrigger />
-                                </div>
-                        </SidebarProvider>
-                        <div id="mainContent" className="flex flex-col w-full max-w-[95%] h-full max-h-[90%] py-5 gap-2">
-                            <NavBar/>
-                            {children}
+                <JotaiProvider>
+                    <main className="h-screen w-screen px-5 py-2">
+                        <div id="mainApp" className="flex h-full w-full gap-10">
+                          <SidebarProvider>
+                              <AppSidebar/>
+                                  <div className="h-full">
+                                      <SidebarTrigger />
+                                  </div>
+                          </SidebarProvider>
+                          <div id="mainContent" className="flex flex-col w-full max-w-[95%] h-full max-h-[90%] py-5 gap-2">
+                              <NavBar/>
+                              {children}
+                          </div>
                         </div>
-                      </div>
-                  </main>
+                    </main>
+                  </JotaiProvider>
                 <ReactQueryDevtools initialIsOpen={false} />
               </QueryContextProvider>
             </ThemeProvider>
