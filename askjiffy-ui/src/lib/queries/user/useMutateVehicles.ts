@@ -18,10 +18,10 @@ export function SaveVehicleMutation(): UseMutationResult<Vehicle,Error,Vehicle, 
         //always refetch after error or success:
         onSettled: () => queryClient.invalidateQueries({ queryKey: ['useGetVehicles'] }),
         onSuccess: () => {
-            toast({title: `Successfully added Vehicle`})
+            toast({title: `Successfully added Vehicle`, variant:"success"})
         }, 
         onError: () => {
-            toast({ title: "Error deleting Vehicle" });
+            toast({ title: "Error deleting Vehicle", variant:"destructive" });
         }
     });
 }
@@ -37,10 +37,10 @@ export function DeleteVehicleMutation(): UseMutationResult<boolean,Error,number,
         onSettled: () => queryClient.invalidateQueries({ queryKey: ['useGetVehicles'] }),
         
         onSuccess: () => {
-            toast({ title: "Successfully deleted Vehicle" });
+            toast({ title: "Successfully deleted Vehicle", variant:"success" });
           }, 
         onError: () => {
-            toast({ title: "Error deleting Vehicle" });
+            toast({ title: "Error deleting Vehicle", variant:"destructive" });
           }
     });
 }
