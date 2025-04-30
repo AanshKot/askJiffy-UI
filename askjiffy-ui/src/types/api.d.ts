@@ -4,7 +4,7 @@ interface UserProfile{
     email: string;
     role: UserRole;
     chatHistory: UserChat[];
-    vehicles: UserVehicle[];
+    vehicles: Vehicle[];
 }
 
 interface UserChat{
@@ -14,11 +14,15 @@ interface UserChat{
     UpdatedAt: Date;
 }
 
-interface UserVehicle{
-    id: number;
+interface Vehicle{
+    id?: number;
     make: string;
     model: string;
+    trim?: string;
     year: number;
+    chassis? : string | null;
+    transmission? : Transmission | null;
+    mileage?: int | null;
     //imageUrl: string
 }
 

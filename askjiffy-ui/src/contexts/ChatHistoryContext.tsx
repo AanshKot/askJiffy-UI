@@ -13,8 +13,8 @@ interface ChatProviderProps{
 
 // creating the context and passing in its initial values 
 const ChatInputContext = createContext<{
-    selectedVehicle: UserVehicle | null;
-    setSelectedVehicle: Dispatch<SetStateAction<UserVehicle | null>>;
+    selectedVehicle: Vehicle | null;
+    setSelectedVehicle: Dispatch<SetStateAction<Vehicle | null>>;
     inputText: string;
     setInputText: Dispatch<SetStateAction<string>>;
 }>(
@@ -28,7 +28,7 @@ const ChatInputContext = createContext<{
 
 // ChatInputProvider doesn't expect any props, except the children its warapping around
 export const ChatInputProvider = ({children} : ChatProviderProps ) => {
-    const [selectedVehicle,setSelectedVehicle] = useState<UserVehicle | null>(null);
+    const [selectedVehicle,setSelectedVehicle] = useState<Vehicle | null>(null);
     const [inputText,setInputText] = useState<string>("");
 
     return(
