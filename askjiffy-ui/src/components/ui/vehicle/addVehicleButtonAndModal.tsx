@@ -23,10 +23,16 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Transmission } from "@/types/enums"
 import { SaveVehicleMutation } from "@/lib/queries/user/useMutateVehicles"
-import { getTransmissionEnumValue } from "@/lib/utils"
+import { cn, getTransmissionEnumValue } from "@/lib/utils"
 import { useState } from "react"
+import { Popover, PopoverContent, PopoverTrigger } from "../popover"
+import { Check, ChevronsUpDown } from "lucide-react"
+import carData from "@/lib/assets/carData"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../command"
 
 const currentYear: number = new Date().getFullYear();
+const manufacturers = Object.keys(carData);
+const tranmissionSelect = ["Automatic", "Manual", "CVT"];
 
 const formSchema = z.object({
     make: z.string().min(2, {
@@ -59,7 +65,7 @@ export default function AddVehicleButtonAndModal(){
 
     //https://www.radix-ui.com/primitives/docs/components/dialog#close-after-asynchronous-form-submission
     const [open, setOpen] = useState<boolean>(false);
-
+    const [models,setModels] = useState<string[]>([]);
 
     // 1. Define form with schema
     const form = useForm<z.infer<typeof formSchema>>({
@@ -91,6 +97,11 @@ export default function AddVehicleButtonAndModal(){
         setOpen(false);
     }
 
+    // https://react-hook-form.com/docs/useform/watch
+    const selectedMake = form.watch("make");
+    const selectedModel = form.watch("model");
+    const selectedTransmission = form.watch("transmission");
+
     return(
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger>
@@ -116,9 +127,59 @@ export default function AddVehicleButtonAndModal(){
                                     render={({field}) => (
                                         <FormItem className="grid grid-cols-4 items-center gap-4">
                                             <FormLabel className="text-right mt-2">Make</FormLabel>
-                                            <FormControl>
-                                                <Input className="col-span-3 " placeholder="Manufacturer" {...field} required />
-                                            </FormControl>
+                                            <Popover>
+                                                <PopoverTrigger asChild>
+                                                    <FormControl>
+                                                        <Button
+                                                            variant="outline"
+                                                            role="combobox"
+                                                            className={cn(
+                                                                "w-[200px] justify-between",
+                                                                !field.value && "text-muted-foreground"
+                                                            )}
+                                                        >
+                                                        { selectedMake || "Select a manufacturer" }
+                                                        <ChevronsUpDown className="opacity-50" />
+                                                        </Button>
+                                                    </FormControl>
+                                                </PopoverTrigger>
+                                                <PopoverContent id="PopoverContent" className="w-[200px] p-0" >
+                                                    <Command>
+                                                        <CommandInput placeholder="Search Manufacturers" className="h-9" />
+                                                        <CommandList>
+                                                            
+                                                            <CommandEmpty>
+                                                                Couldn't find manufacturer.
+                                                            </CommandEmpty>
+                                                            
+                                                            <CommandGroup>
+                                                                {manufacturers.map((manufacturer) => (
+                                                                    <CommandItem
+                                                                        value={manufacturer}
+                                                                        key={manufacturer}
+                                                                        onSelect={() => {
+                                                                            form.setValue("make", manufacturer);
+                                                                            setModels(Object.keys(carData[manufacturer]));
+                                                                            form.setValue("model", "");
+                                                                        }}
+                                                                    >
+                                                                        {manufacturer}
+
+                                                                        <Check 
+                                                                            className={cn(
+                                                                                "ml-auto",
+                                                                                manufacturer === field.value
+                                                                                  ? "opacity-100"
+                                                                                  : "opacity-0"
+                                                                            )}
+                                                                        />
+                                                                    </CommandItem>
+                                                                ))}
+                                                            </CommandGroup>
+                                                        </CommandList>
+                                                    </Command>
+                                                </PopoverContent>
+                                            </Popover>
                                             <FormMessage className="w-full col-span-3 m-0" />
                                         </FormItem>
                                     )}
@@ -130,9 +191,58 @@ export default function AddVehicleButtonAndModal(){
                                     render={({field}) => (
                                         <FormItem className="grid grid-cols-4 items-center gap-4">
                                             <FormLabel className="text-right mt-2">Model</FormLabel>
-                                            <FormControl>
-                                                <Input className="col-span-3 " placeholder="Model" {...field} required />
-                                            </FormControl>
+                                            <Popover>
+                                                <PopoverTrigger asChild>
+                                                    <FormControl>
+                                                        <Button
+                                                            variant="outline"
+                                                            role="combobox"
+                                                            className={cn(
+                                                                "w-[200px] justify-between",
+                                                                !field.value && "text-muted-foreground"
+                                                            )}
+                                                            disabled={!selectedMake}
+                                                        >
+                                                            { selectedModel || "Select a model" }
+                                                            <ChevronsUpDown className="opacity-50" />
+                                                        </Button>
+                                                    </FormControl>
+                                                </PopoverTrigger>
+                                                <PopoverContent className="w-[200px] p-0" >
+                                                    <Command>
+                                                        <CommandInput placeholder="Search Models" className="h-9" />
+                                                        <CommandList>
+                                                            
+                                                            <CommandEmpty>
+                                                                Couldn't find model.
+                                                            </CommandEmpty>
+                                                            
+                                                            <CommandGroup>
+                                                                {models.map((model) => (
+                                                                    <CommandItem
+                                                                        value={model}
+                                                                        key={model}
+                                                                        onSelect={() => {
+                                                                            form.setValue("model", model)
+                                                                        }}
+                                                                    >
+                                                                        {model}
+
+                                                                        <Check 
+                                                                            className={cn(
+                                                                                "ml-auto",
+                                                                                model === field.value
+                                                                                  ? "opacity-100"
+                                                                                  : "opacity-0"
+                                                                            )}
+                                                                        />
+                                                                    </CommandItem>
+                                                                ))}
+                                                            </CommandGroup>
+                                                        </CommandList>
+                                                    </Command>
+                                                </PopoverContent>
+                                            </Popover>
                                             <FormMessage className="w-full col-span-3 m-0" />
                                         </FormItem>
                                     )}
@@ -172,9 +282,57 @@ export default function AddVehicleButtonAndModal(){
                                     render={({field}) => (
                                         <FormItem className="grid grid-cols-4 items-center gap-4">
                                             <FormLabel className="text-right mt-2">Transmission</FormLabel>
-                                            <FormControl>
-                                                <Input className="col-span-3 ml-2 " placeholder="Transmission" {...field} />
-                                            </FormControl>
+                                                <Popover>
+                                                    <PopoverTrigger asChild>
+                                                        <FormControl>
+                                                            <Button
+                                                                variant="outline"
+                                                                role="combobox"
+                                                                className={cn(
+                                                                    "col-span-3 justify-between",
+                                                                    !field.value && "text-muted-foreground"
+                                                                )}
+                                                            >
+                                                                { selectedTransmission || "Select transmission type" }
+                                                                <ChevronsUpDown className="opacity-50" />
+                                                            </Button>
+                                                        </FormControl>
+                                                    </PopoverTrigger>
+                                                    <PopoverContent className="w-[200px] p-0" >
+                                                        <Command>
+                                                            <CommandInput placeholder="Search Transmission" className="h-9" />
+                                                            <CommandList>
+                                                                
+                                                                <CommandEmpty>
+                                                                    Couldn't find transmission type.
+                                                                </CommandEmpty>
+                                                                
+                                                                <CommandGroup>
+                                                                    {tranmissionSelect.map((transmission) => (
+                                                                        <CommandItem
+                                                                            value={transmission}
+                                                                            key={transmission}
+                                                                            onSelect={() => {
+                                                                                form.setValue("transmission", transmission)
+                                                                            }}
+                                                                        >
+                                                                            {transmission}
+
+                                                                            <Check 
+                                                                                className={cn(
+                                                                                    "ml-auto",
+                                                                                    transmission === field.value
+                                                                                    ? "opacity-100"
+                                                                                    : "opacity-0"
+                                                                                )}
+                                                                            />
+                                                                        </CommandItem>
+                                                                    ))}
+                                                                </CommandGroup>
+                                                            </CommandList>
+                                                        </Command>
+                                                </PopoverContent>
+                                                </Popover>
                                             <FormMessage className="w-full col-span-3 m-0" />
                                         </FormItem>
                                     )}
