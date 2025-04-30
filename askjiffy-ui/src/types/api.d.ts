@@ -18,6 +18,7 @@ interface Vehicle{
     id?: number;
     make: string;
     model: string;
+    trim?: string;
     year: number;
     chassis? : string | null;
     transmission? : Transmission | null;

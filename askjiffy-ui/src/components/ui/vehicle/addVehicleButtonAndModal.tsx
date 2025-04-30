@@ -35,12 +35,13 @@ const manufacturers = Object.keys(carData);
 const tranmissionSelect = ["Automatic", "Manual", "CVT"];
 
 const formSchema = z.object({
-    make: z.string().min(2, {
-        message: "Must select a valid manufacturer.",
+    make: z.string({
+        required_error: "Please select a valid manufacturer."
     }),
-    model: z.string().min(2, {
-        message: "Must select a valid model."
+    model: z.string({
+        required_error: "Please select a valid manufacturer."
     }),
+    trim: z.string().optional(),
     year: z.coerce.number().gt(1961,{
         message: "Must input a year greater than 1961"
     }).lte(currentYear,{
@@ -66,6 +67,7 @@ export default function AddVehicleButtonAndModal(){
     //https://www.radix-ui.com/primitives/docs/components/dialog#close-after-asynchronous-form-submission
     const [open, setOpen] = useState<boolean>(false);
     const [models,setModels] = useState<string[]>([]);
+    const [trims, setTrims] = useState<string[]>([]);
 
     // 1. Define form with schema
     const form = useForm<z.infer<typeof formSchema>>({
@@ -74,6 +76,7 @@ export default function AddVehicleButtonAndModal(){
         defaultValues: {
             make: "",
             model: "",
+            trim: "",
             year: 0,
             transmission: "",
             chassis: "",
@@ -87,6 +90,7 @@ export default function AddVehicleButtonAndModal(){
         const newVehicle : Vehicle = {
             make: values.make,
             model: values.model,
+            trim: values.trim,
             year: values.year,
             chassis: values.chassis,
             transmission: getTransmissionEnumValue(values.transmission),
@@ -100,8 +104,9 @@ export default function AddVehicleButtonAndModal(){
     // https://react-hook-form.com/docs/useform/watch
     const selectedMake = form.watch("make");
     const selectedModel = form.watch("model");
+    const selectedTrim = form.watch("trim");
     const selectedTransmission = form.watch("transmission");
-
+    
     return(
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger>
@@ -134,7 +139,7 @@ export default function AddVehicleButtonAndModal(){
                                                             variant="outline"
                                                             role="combobox"
                                                             className={cn(
-                                                                "w-[200px] justify-between",
+                                                                "col-span-3 justify-between",
                                                                 !field.value && "text-muted-foreground"
                                                             )}
                                                         >
@@ -160,7 +165,8 @@ export default function AddVehicleButtonAndModal(){
                                                                         onSelect={() => {
                                                                             form.setValue("make", manufacturer);
                                                                             setModels(Object.keys(carData[manufacturer]));
-                                                                            form.setValue("model", "");
+                                                                            form.resetField("model");
+                                                                            form.resetField("trim");
                                                                         }}
                                                                     >
                                                                         {manufacturer}
@@ -198,7 +204,7 @@ export default function AddVehicleButtonAndModal(){
                                                             variant="outline"
                                                             role="combobox"
                                                             className={cn(
-                                                                "w-[200px] justify-between",
+                                                                "col-span-3 justify-between",
                                                                 !field.value && "text-muted-foreground"
                                                             )}
                                                             disabled={!selectedMake}
@@ -223,7 +229,9 @@ export default function AddVehicleButtonAndModal(){
                                                                         value={model}
                                                                         key={model}
                                                                         onSelect={() => {
-                                                                            form.setValue("model", model)
+                                                                            form.setValue("model", model);
+                                                                            form.resetField("trim");
+                                                                            setTrims(carData[selectedMake][model]);
                                                                         }}
                                                                     >
                                                                         {model}
@@ -232,6 +240,69 @@ export default function AddVehicleButtonAndModal(){
                                                                             className={cn(
                                                                                 "ml-auto",
                                                                                 model === field.value
+                                                                                  ? "opacity-100"
+                                                                                  : "opacity-0"
+                                                                            )}
+                                                                        />
+                                                                    </CommandItem>
+                                                                ))}
+                                                            </CommandGroup>
+                                                        </CommandList>
+                                                    </Command>
+                                                </PopoverContent>
+                                            </Popover>
+                                            <FormMessage className="w-full col-span-3 m-0" />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField 
+                                    control={form.control}
+                                    name="trim"
+                                    render={({field}) => (
+                                        <FormItem className="grid grid-cols-4 items-center gap-4">
+                                            <FormLabel className="text-right mt-2">Trim</FormLabel>
+                                            <Popover>
+                                                <PopoverTrigger asChild>
+                                                    <FormControl>
+                                                        <Button
+                                                            variant="outline"
+                                                            role="combobox"
+                                                            className={cn(
+                                                                "col-span-3 justify-between",
+                                                                !field.value && "text-muted-foreground"
+                                                            )}
+                                                            disabled={!selectedModel}
+                                                        >
+                                                            { selectedTrim || "Select a Trim" }
+                                                            <ChevronsUpDown className="opacity-50" />
+                                                        </Button>
+                                                    </FormControl>
+                                                </PopoverTrigger>
+                                                <PopoverContent className="w-[200px] p-0" >
+                                                    <Command>
+                                                        <CommandInput placeholder="Search Trims" className="h-9" />
+                                                        <CommandList>
+                                                            
+                                                            <CommandEmpty>
+                                                                Couldn't find Trim.
+                                                            </CommandEmpty>
+                                                            
+                                                            <CommandGroup>
+                                                                {trims.map((trim) => (
+                                                                    <CommandItem
+                                                                        value={trim}
+                                                                        key={trim}
+                                                                        onSelect={() => {
+                                                                            form.setValue("trim", trim)
+                                                                        }}
+                                                                    >
+                                                                        {trim}
+
+                                                                        <Check 
+                                                                            className={cn(
+                                                                                "ml-auto",
+                                                                                trim === field.value
                                                                                   ? "opacity-100"
                                                                                   : "opacity-0"
                                                                             )}
@@ -281,7 +352,7 @@ export default function AddVehicleButtonAndModal(){
                                     name="transmission"
                                     render={({field}) => (
                                         <FormItem className="grid grid-cols-4 items-center gap-4">
-                                            <FormLabel className="text-right mt-2">Transmission</FormLabel>
+                                            <FormLabel className="text-right text-xs mt-2">Transmission</FormLabel>
                                                 <Popover>
                                                     <PopoverTrigger asChild>
                                                         <FormControl>
