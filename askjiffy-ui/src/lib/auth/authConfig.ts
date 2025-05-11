@@ -1,7 +1,7 @@
 import NextAuth from "next-auth"
 import Google from "next-auth/providers/google"
 import 'next-auth/jwt';
-import { refreshSecurityTokens } from "./auth-utils";
+import { refreshSecurityTokens, createProfile, checkProfileExists } from "./auth-utils";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
     providers: [
@@ -15,14 +15,24 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         async jwt({token, account}){
             // on user signIn the IdToken is automatically refreshed, and the account param is passed to jwt callback
             if(account){
+                let profileExists = await checkProfileExists(account.id_token!); 
+    
+                //want to create a profile on signUp or on subsequent logins if for some case the user profile wasn't created on signUp
+                if(!profileExists)
+                {
+                    await createProfile(account.id_token!);
+                }
+                
                 return{
                     ...token,
                     accessToken : account.access_token,
                     idToken : account.id_token,
                     refreshToken : account.refresh_token,
                     expiresAt : account.expires_at ?? Math.floor(Date.now() / 1000) + 3600 // timestamp representing when IdToken expires, current time timestamp + 1 hour
-                } 
+                }
             }
+            
+            //below runs whenever session is accessed (and user isn't logging in/signing up)
             
             else if( Date.now() < token.expiresAt! * 1000 ){
                 console.log(token.idToken);
@@ -65,7 +75,7 @@ declare module "next-auth/jwt"{
         accessToken?: string
         idToken?: string
         refreshToken?: string
-        expiresAt?: number,
+        expiresAt?: number
         error? : "RefreshTokenError"
     }
 }

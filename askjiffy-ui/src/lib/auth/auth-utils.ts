@@ -1,6 +1,38 @@
 import axios from "axios";
 import { JWT } from "next-auth/jwt";
 
+// API call to create a user profile doesn't have an effect on cached entity data is an action: 
+// chose to not make it a custom hook that wraps a react-query hook, not retrieving anything just making a post request using the user email and provider to create a profile
+// more info on decision: https://www.reddit.com/r/reactjs/comments/jd5oxu/does_reactquery_make_sense_in_an_auth_provider/
+export async function createProfile(idToken: string) : Promise<boolean>{
+    try {
+        console.log("creating user profile...");
+        const res = await axios.post<boolean>(`${process.env.API_URL}/User/createprofile`, null,{
+            headers:{
+                Authorization: `Bearer ${idToken}`
+            }
+        })
+        return res.data;
+    } catch (error) {
+        console.error("Error creating profile", error);
+        return false;
+    }
+}
+
+export async function checkProfileExists(idToken: string): Promise<boolean>{
+    try {
+        const res = await axios.get<boolean>(`${process.env.API_URL}/User/profileexists`, {
+            headers:{
+                Authorization: `Bearer ${idToken}`
+            }
+        })
+        return res.data;
+    } catch (error) {
+        console.error("Error finding profile", error);
+        return false;
+    }
+}
+
 export async function refreshSecurityTokens(token : JWT) : Promise<JWT>{
     try {
         const urlSearchParams = new URLSearchParams({
