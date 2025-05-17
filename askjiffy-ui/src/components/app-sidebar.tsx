@@ -1,7 +1,7 @@
 "use client"
 
-import { Calendar, Home, Inbox, Search, Settings, Wrench, BookText } from "lucide-react"
-import { useRouter } from 'next/navigation'
+import { Wrench, BookText } from "lucide-react"
+import { usePathname } from 'next/navigation'
 
 import {
   Sidebar,
@@ -14,6 +14,8 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import Link from "next/link"
+import ChatHistory from "./ui/chat/chatHistory"
+import { useEffect, useState } from "react"
 
 // Menu items.
 const Links = [
@@ -29,8 +31,22 @@ const Links = [
   }
 ];
 export function AppSidebar() {
-  const router = useRouter();  
+  const pathname = usePathname();
+  const [isMounted, setIsMounted] = useState(false);
+  let showChatHistory = false;
+  
+  //empty dependency array runs once on component mount
+  useEffect( () => {
+    setIsMounted(true);
+  },[])
 
+  if(isMounted){
+    if(pathname === "/" || pathname.startsWith('/chat')){
+      showChatHistory = true;
+    }
+  }
+  
+ 
   return (
     <Sidebar>
       <SidebarContent>
@@ -53,6 +69,18 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+        { showChatHistory ? 
+          (<SidebarGroup>
+              <SidebarGroupLabel>Chat Session History</SidebarGroupLabel>
+              <SidebarGroupContent>
+                  <SidebarMenu>
+                    <ChatHistory />
+                  </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>)
+            : 
+            null
+        }
       </SidebarContent>
     </Sidebar>
   )

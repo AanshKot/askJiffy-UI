@@ -13,17 +13,17 @@ export async function GET(req: Request) : Promise<Response>{
     }
     
     try{
-        const res = await axios.get(`${process.env.API_URL}/User/getprofile`,{
+        const res = await axios.get(`${process.env.API_URL}/Chat/getchatsessions`,{
             headers:{
                 Authorization: `Bearer ${token.idToken}`
             }
         });
-        
+
         //JSON.stringify ensures that the res.data object is serialized, this is necessary to map response to an api type
         return new Response(JSON.stringify(res.data), {status:200});
     }
     catch(error){
-        console.error('Error fetching profile:', error);
+        console.error('Error fetching chats:', error);
         
         // when catching an error, Typescript doesn't know what the type of error is, error is unknown cannot access properties like .response or .status
         // axios.isAxiosError(error) narrows the type first
@@ -39,8 +39,5 @@ export async function GET(req: Request) : Promise<Response>{
 
         //catch all for unknown errors 
         return new Response("Unexpected Error",{ status : 500});
-    }
-    
-
-   
+    }   
 }
