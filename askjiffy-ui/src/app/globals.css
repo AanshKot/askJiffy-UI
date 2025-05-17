@@ -60,6 +60,27 @@
 	will-change: transform, opacity;
 }
 
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  height: 30px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
 /* NavigationMenu.List wrapped in a div with relative positioning  https://github.com/radix-ui/primitives/discussions/1874 */
 nav > div:first-child {
 	display: contents

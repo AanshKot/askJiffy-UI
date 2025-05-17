@@ -1,17 +1,7 @@
-
-interface UserProfile{
-    id: number;
-    email: string;
-    role: UserRole;
-    chatHistory: UserChat[];
-    vehicles: Vehicle[];
-}
-
-interface UserChat{
+interface ChatSessionHistory{
     id: number;
     title: string;
-    CreatedAt: Date;
-    UpdatedAt: Date;
+    updatedAt: Date;   
 }
 
 interface Vehicle{
@@ -24,12 +14,6 @@ interface Vehicle{
     transmission? : Transmission | null;
     mileage?: int | null;
     //imageUrl: string
-}
-
-enum UserRole{
-    None = 0,
-    Mechanic = 1,
-    Moderator = 2,
 }
 
 enum QuestionType{
