@@ -1,10 +1,37 @@
-interface ChatSessionHistory{
+interface ChatSessionHistory {
     id: number;
     title: string;
     updatedAt: Date;   
 }
 
-interface Vehicle{
+//Req Objects
+interface ChatRequest {
+    vehicleId: number;
+    initialQuestionText: string;
+}
+
+interface NewMessage {
+    id?: number;
+    questionText: string;
+}
+
+// Resp. Objects
+interface ChatSession {
+    id: number;
+    title: string;
+    vehicle: Vehicle;
+    chatMessages: ChatMessage[];
+    updatedAt: Date;
+}
+
+interface ChatMessage{
+    id: number,
+    question: string,
+    response?: string
+    updatedAt: Date;
+}
+
+interface Vehicle {
     id?: number;
     make: string;
     model: string;
@@ -16,7 +43,7 @@ interface Vehicle{
     //imageUrl: string
 }
 
-enum QuestionType{
+enum QuestionType {
     Repair = 0,
     Parts = 1,
     Pricing = 2,
