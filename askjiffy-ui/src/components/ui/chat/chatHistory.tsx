@@ -2,6 +2,9 @@
 
 import { useGetChats } from "@/lib/queries/user/useGetChats";
 import { Separator } from "../separator";
+import { useAtomValue } from "jotai";
+import { activeChatSessionAtom } from "@/contexts/atoms/ChatSessionAtom";
+import { cn } from "@/lib/utils";
 
 
 function cleanTitle(title: string){
@@ -54,7 +57,8 @@ function categorizeChatSessions(
 
 export default function ChatHistory(){
     const {data: chatSessionHistory, isLoading, isError, error} = useGetChats();
-
+    const activeChatSession = useAtomValue(activeChatSessionAtom);
+    
     if(isError){
         return(
             <div>Error: {error.message}</div>
@@ -80,7 +84,9 @@ export default function ChatHistory(){
                                     <ul className="w-full h-full">
                                         {
                                             chatSessions.map((chat) => (
-                                                <li key={chat.id} className="my-2 hover:bg-gray-200 w-full rounded-md px-2 pt-1">
+                                                <li key={chat.id} className={cn("my-2 hover:bg-gray-200 w-full rounded-md px-2 pt-1",
+                                                    activeChatSession?.id === chat.id ? "bg-gray-200" : ""
+                                                )}>
                                                     {/* TODO: onClick handler */}
                                                     <button type="submit" className="text-xs text-left rounded-md">
                                                         {
