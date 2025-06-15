@@ -28,7 +28,6 @@ interface ChatMessage{
     id: number,
     question: string,
     response?: string
-    updatedAt: Date;
 }
 
 interface Vehicle {

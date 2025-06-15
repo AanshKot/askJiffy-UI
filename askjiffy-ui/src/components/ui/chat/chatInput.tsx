@@ -30,7 +30,6 @@ export default function ChatInput(){
             }
 
             createNewChat(chatRequest);
-            //redirect to the created chat page after this post request completes
         }else{
             const chatId = Number(chatSessionId);
             
@@ -44,8 +43,8 @@ export default function ChatInput(){
     }
 
     return(
-        <div id="chatInput" className="w-full h-[20%] max-w-3xl border border-solid rounded-lg shadow px-2">
-            <form className="w-full h-full" onSubmit={(e) => {
+        <div id="chatInput" className="sticky bottom-0 mt-2 bg-white w-[60%] h-[20%] max-w-3xl border border-solid rounded-lg shadow px-2 z-[9999]">
+            <form className="w-full h-full pb-2" onSubmit={(e) => {
                     e.preventDefault(); //prevents full page reload
                     handleSubmit();
                 }}>

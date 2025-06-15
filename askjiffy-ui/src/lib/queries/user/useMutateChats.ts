@@ -1,8 +1,6 @@
-import { activeChatSessionAtom } from "@/contexts/atoms/ChatSessionAtom";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation, UseMutationResult, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { useSetAtom } from "jotai";
 import { useRouter } from "next/navigation";
 
 const addNewChat = (newChatRequest: ChatRequest):Promise<ChatSession> => axios.post("/api/chat/new", newChatRequest).then((response) => response.data);
@@ -15,14 +13,12 @@ export function SaveChatMutation() : UseMutationResult<ChatSession,Error, ChatRe
     const queryClient = useQueryClient();
     const router = useRouter();
     const { toast } = useToast();
-    const setActiveChatSession = useSetAtom(activeChatSessionAtom);
 
     return useMutation({
         mutationKey: ["newChat"],
         mutationFn: addNewChat,
         onSettled: () => queryClient.invalidateQueries({ queryKey: ['useGetChats'] }),
         onSuccess: (chatSession) => {
-            setActiveChatSession(chatSession); 
             router.push(`/chat/${chatSession.id}`);
             toast({title: `Successfully started chat`, variant:"success"});
         }, 

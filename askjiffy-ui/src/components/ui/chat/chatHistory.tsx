@@ -2,10 +2,9 @@
 
 import { useGetChats } from "@/lib/queries/user/useGetChats";
 import { Separator } from "../separator";
-import { useAtomValue } from "jotai";
-import { activeChatSessionAtom } from "@/contexts/atoms/ChatSessionAtom";
 import { cn } from "@/lib/utils";
-
+import { useRouter } from 'next/navigation'
+import { useParams } from 'next/navigation'
 
 function cleanTitle(title: string){
     const cleanTitle = title.replace(/[^a-zA-Z0-9 - $]/g, '');
@@ -57,8 +56,9 @@ function categorizeChatSessions(
 
 export default function ChatHistory(){
     const {data: chatSessionHistory, isLoading, isError, error} = useGetChats();
-    const activeChatSession = useAtomValue(activeChatSessionAtom);
-    
+    const router = useRouter();
+    const params = useParams<{ chatSessionId: string }>() //can just use the path params to determine which chat session is currently active
+
     if(isError){
         return(
             <div>Error: {error.message}</div>
@@ -80,15 +80,15 @@ export default function ChatHistory(){
                         ([category, chatSessions]) => (
                             <div key={`${category}-container`} className="h-full w-full">
                                 <h4 key={`${category}-header`} className="font-medium text-xs mb-2">{category}</h4>
-                                <div className="h-full max-h-[125px] overflow-y-auto mb-2 overflow-hidden " data-testid = {`${category}-container`} key={`${category}-container`}> 
+                                <div className="h-full max-h-[125px] pr-4 overflow-y-auto mb-2 overflow-hidden " data-testid = {`${category}-container`} key={`${category}-container`}> 
                                     <ul className="w-full h-full">
                                         {
                                             chatSessions.map((chat) => (
                                                 <li key={chat.id} className={cn("my-2 hover:bg-gray-200 w-full rounded-md px-2 pt-1",
-                                                    activeChatSession?.id === chat.id ? "bg-gray-200" : ""
+                                                   parseInt(params.chatSessionId) === chat.id ? "bg-gray-200" : ""
                                                 )}>
                                                     {/* TODO: onClick handler */}
-                                                    <button type="submit" className="text-xs text-left rounded-md">
+                                                    <button type="submit" className="text-xs text-left rounded-md" onClick={() => {router.push(`/chat/${chat.id}`)}}>
                                                         {
                                                             cleanTitle(chat.title)
                                                         }
@@ -97,7 +97,7 @@ export default function ChatHistory(){
                                             ))
                                         }
                                     </ul>
-                                    <Separator className="my-2"/>
+                                    {category !== "A Long Time Ago" && <Separator className="my-2"/>}
                                 </div>
                             </div>
                         )
