@@ -11,7 +11,6 @@ export async function GET(req: Request, { params }: { params: { chatSessionId: n
     
     try{
         const { chatSessionId } = await params;
-        console.log(`chat session id: ${chatSessionId} `);
 
         const res = await axios.get(`${process.env.API_URL}/Chat/${chatSessionId}`,{
             headers:{
@@ -19,8 +18,6 @@ export async function GET(req: Request, { params }: { params: { chatSessionId: n
             }
         });
         
-        console.log(res.data);
-    
         return new Response(JSON.stringify(res.data), {status:200});
     }
     catch(error){
