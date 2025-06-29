@@ -22,7 +22,7 @@ export default function ChatInput({streamingAnswer, selectedVehicleId, handleSub
     const [inputText, setInputText] = useState<string>('');
 
     return(
-        <div id="chatInput" className="sticky bottom-0 mt-2 bg-white w-[75%] h-[20%] max-w-3xl border border-solid rounded-lg shadow px-2 z-[9999]">
+        <div id="chatInput" className="sticky bottom-0 mt-2 bg-white w-[75%] h-[20%] max-w-3xl border border-solid rounded-lg shadow px-2 z-[10]">
             <form className="w-full h-full pb-2" onSubmit={(e) => {
                     e.preventDefault(); //prevents full page reload
                     handleSubmit(inputText);
