@@ -45,13 +45,13 @@ export default async function RootLayout({
             <ThemeProvider enableSystem={false}>
               <QueryContextProvider>
                 <JotaiProvider>
-                    <main className="h-screen w-screen px-5 py-2">
+                    <main className="h-screen w-screen px-5 py-2 overflow-hidden">
                         <div id="mainApp" className="flex h-full w-full gap-10">
                           <SidebarProvider>
                               <AppSidebar/>
-                                  <div className="h-full">
-                                      <SidebarTrigger />
-                                  </div>
+                              <div className="h-full">
+                                  <SidebarTrigger />
+                              </div>
                           </SidebarProvider>
                           <div id="mainContent" className="flex flex-col w-full max-w-[95%] h-full max-h-[90%] py-5 gap-2">
                               <NavBar/>

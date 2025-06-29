@@ -22,3 +22,18 @@ export const getTransmissionEnumValue = (transmission: string | undefined): Tran
       return null; // Handle invalid transmission
   }
 };
+
+
+export const updateChatMessageHistory = (chatMessageHistory: ChatMessage[], newChatMessage: ChatMessage) => {
+  const foundMessageIndex = chatMessageHistory.findIndex((message) => {return message.id === newChatMessage?.id});          
+  // in the case that the pendingChat message is in response to the start message
+  // optimistically update the chatMessage
+  if (foundMessageIndex !== -1) {
+    chatMessageHistory[foundMessageIndex].response = newChatMessage.response;
+  } 
+  else {
+    chatMessageHistory.push(newChatMessage);
+  }
+
+  return chatMessageHistory;
+}

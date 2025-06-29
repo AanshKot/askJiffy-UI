@@ -2,7 +2,10 @@
 
 import { useGetChats } from "@/lib/queries/user/useGetChats";
 import { Separator } from "../separator";
-
+import { cn } from "@/lib/utils";
+import { useRouter } from 'next/navigation'
+import { useParams } from 'next/navigation'
+import { useQueryClient } from "@tanstack/react-query";
 
 function cleanTitle(title: string){
     const cleanTitle = title.replace(/[^a-zA-Z0-9 - $]/g, '');
@@ -39,13 +42,13 @@ function categorizeChatSessions(
             const lastUpdated = chatSessionHistory.updatedAt;
 
             if (lastUpdated >= startOfToday){
-                categorized["Today"].push(chatSessionHistory);
+                categorized["Today"].unshift(chatSessionHistory);
             }else if(lastUpdated >= startOfYesterday && lastUpdated <= endOfYesterday){
-                categorized["Yesterday"].push(chatSessionHistory);
+                categorized["Yesterday"].unshift(chatSessionHistory);
             }else if( lastUpdated >= sevenDaysAgo){
-                categorized["Last 7 Days"].push(chatSessionHistory);
+                categorized["Last 7 Days"].unshift(chatSessionHistory);
             }else{
-                categorized["A Long Time Ago"].push(chatSessionHistory);
+                categorized["A Long Time Ago"].unshift(chatSessionHistory);
             }
     })
     
@@ -54,6 +57,9 @@ function categorizeChatSessions(
 
 export default function ChatHistory(){
     const {data: chatSessionHistory, isLoading, isError, error} = useGetChats();
+    const router = useRouter();
+    const params = useParams<{ chatSessionId: string }>() //can just use the path params to determine which chat session is currently active
+    const queryClient = useQueryClient();
 
     if(isError){
         return(
@@ -76,13 +82,18 @@ export default function ChatHistory(){
                         ([category, chatSessions]) => (
                             <div key={`${category}-container`} className="h-full w-full">
                                 <h4 key={`${category}-header`} className="font-medium text-xs mb-2">{category}</h4>
-                                <div className="h-full max-h-[125px] overflow-y-auto mb-2 overflow-hidden " data-testid = {`${category}-container`} key={`${category}-container`}> 
+                                <div className="h-full max-h-[125px] pr-4 overflow-y-auto mb-2 overflow-hidden " data-testid = {`${category}-container`} key={`${category}-container`}> 
                                     <ul className="w-full h-full">
                                         {
                                             chatSessions.map((chat) => (
-                                                <li key={chat.id} className="my-2 hover:bg-gray-200 w-full rounded-md px-2 pt-1">
+                                                <li key={chat.id} className={cn("my-2 hover:bg-gray-200 w-full rounded-md px-2 pt-1",
+                                                   parseInt(params.chatSessionId) === chat.id ? "bg-gray-200" : ""
+                                                )}>
                                                     {/* TODO: onClick handler */}
-                                                    <button type="submit" className="text-xs text-left rounded-md">
+                                                    <button type="submit" className="text-xs text-left rounded-md" onClick={() => {
+                                                            queryClient.invalidateQueries({queryKey: ["useGetChat", chat.id]});
+                                                            router.push(`/chat/${chat.id}`)
+                                                        }}>
                                                         {
                                                             cleanTitle(chat.title)
                                                         }
@@ -91,7 +102,7 @@ export default function ChatHistory(){
                                             ))
                                         }
                                     </ul>
-                                    <Separator className="my-2"/>
+                                    {category !== "A Long Time Ago" && <Separator className="my-2"/>}
                                 </div>
                             </div>
                         )

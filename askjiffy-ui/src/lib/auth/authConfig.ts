@@ -35,14 +35,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             //below runs whenever session is accessed (and user isn't logging in/signing up)
             
             else if( Date.now() < token.expiresAt! * 1000 ){
-                console.log(token.idToken);
                 return token;
             }
 
             else{
                 //subsequent logins or session accesses but id_token and access_token has expired, try to refresh
                 if(!token.refreshToken) throw new TypeError("Missing refresh_token");
-                console.log("refreshing token...")
                 return await refreshSecurityTokens(token);              
             }
         },
