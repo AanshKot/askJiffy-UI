@@ -19,7 +19,7 @@ export function SaveChatMutation() : UseMutationResult<ChatSession,Error, ChatRe
         mutationFn: addNewChat,
         onSettled: () => queryClient.invalidateQueries({ queryKey: ['useGetChats'] }),
         onSuccess: (chatSession) => {
-            router.push(`/chat/${chatSession.id}`);
+            router.push(`/chat/${chatSession.id}?newChat=true`);
             toast({title: `Successfully started chat`, variant:"success"});
         }, 
         onError: () => {

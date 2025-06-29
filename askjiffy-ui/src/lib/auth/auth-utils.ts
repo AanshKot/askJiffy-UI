@@ -6,7 +6,6 @@ import { JWT } from "next-auth/jwt";
 // more info on decision: https://www.reddit.com/r/reactjs/comments/jd5oxu/does_reactquery_make_sense_in_an_auth_provider/
 export async function createProfile(idToken: string) : Promise<boolean>{
     try {
-        console.log("creating user profile...");
         const res = await axios.post<boolean>(`${process.env.API_URL}/User/createprofile`, null,{
             headers:{
                 Authorization: `Bearer ${idToken}`

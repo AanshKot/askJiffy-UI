@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
+    "debug": "node --inspect node_modules/next/dist/bin/next dev",
+    "dev:turbo": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -20,7 +22,7 @@
     "@radix-ui/react-slot": "^1.1.2",
     "@radix-ui/react-toast": "^1.2.11",
     "@radix-ui/react-tooltip": "^1.1.8",
-    "@tanstack/react-query": "^5.66.10",
+    "@tanstack/react-query": "^5.80.7",
     "askjiffy-ui": "file:",
     "axios": "^1.7.9",
     "class-variance-authority": "^0.7.1",

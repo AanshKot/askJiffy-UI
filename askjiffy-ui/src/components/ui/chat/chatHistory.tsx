@@ -5,6 +5,7 @@ import { Separator } from "../separator";
 import { cn } from "@/lib/utils";
 import { useRouter } from 'next/navigation'
 import { useParams } from 'next/navigation'
+import { useQueryClient } from "@tanstack/react-query";
 
 function cleanTitle(title: string){
     const cleanTitle = title.replace(/[^a-zA-Z0-9 - $]/g, '');
@@ -41,13 +42,13 @@ function categorizeChatSessions(
             const lastUpdated = chatSessionHistory.updatedAt;
 
             if (lastUpdated >= startOfToday){
-                categorized["Today"].push(chatSessionHistory);
+                categorized["Today"].unshift(chatSessionHistory);
             }else if(lastUpdated >= startOfYesterday && lastUpdated <= endOfYesterday){
-                categorized["Yesterday"].push(chatSessionHistory);
+                categorized["Yesterday"].unshift(chatSessionHistory);
             }else if( lastUpdated >= sevenDaysAgo){
-                categorized["Last 7 Days"].push(chatSessionHistory);
+                categorized["Last 7 Days"].unshift(chatSessionHistory);
             }else{
-                categorized["A Long Time Ago"].push(chatSessionHistory);
+                categorized["A Long Time Ago"].unshift(chatSessionHistory);
             }
     })
     
@@ -58,6 +59,7 @@ export default function ChatHistory(){
     const {data: chatSessionHistory, isLoading, isError, error} = useGetChats();
     const router = useRouter();
     const params = useParams<{ chatSessionId: string }>() //can just use the path params to determine which chat session is currently active
+    const queryClient = useQueryClient();
 
     if(isError){
         return(
@@ -88,7 +90,10 @@ export default function ChatHistory(){
                                                    parseInt(params.chatSessionId) === chat.id ? "bg-gray-200" : ""
                                                 )}>
                                                     {/* TODO: onClick handler */}
-                                                    <button type="submit" className="text-xs text-left rounded-md" onClick={() => {router.push(`/chat/${chat.id}`)}}>
+                                                    <button type="submit" className="text-xs text-left rounded-md" onClick={() => {
+                                                            queryClient.invalidateQueries({queryKey: ["useGetChat", chat.id]});
+                                                            router.push(`/chat/${chat.id}`)
+                                                        }}>
                                                         {
                                                             cleanTitle(chat.title)
                                                         }

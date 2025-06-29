@@ -10,7 +10,9 @@ interface ChatRequest {
     initialQuestionText: string;
 }
 
-interface NewMessage {
+interface Message {
+    // if an id exists this means the user is either editing an old message
+    // or the starter message is being answered
     id?: number;
     questionText: string;
 }
